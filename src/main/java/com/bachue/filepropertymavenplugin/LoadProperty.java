@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Object with configuration
  * @author Alejandro Vivas
- * @version 6/09/2017 0.0.1-SNAPSHOT
+ * @version 7/09/2017 0.0.1-SNAPSHOT
  * @since 6/09/2017 0.0.1-SNAPSHOT
  */
 public class LoadProperty
@@ -48,6 +48,10 @@ public class LoadProperty
 	private String			sourceEncoding	= StandardCharsets.UTF_8.toString();
 	/** If is true append a new line before append content */
 	private boolean			appendNewLine	= true;
+	/** Prepend content */
+	private String prependContent;
+	/** Append content */
+	private String appendContent;
 
 	/**
 	 * @author Alejandro Vivas
@@ -179,5 +183,49 @@ public class LoadProperty
 	public boolean isAppendNewLine()
 	{
 		return appendNewLine;
+	}
+
+	/**
+	 * @author Alejandro Vivas
+	 * @version 7/09/2017 0.0.1-SNAPSHOT
+	 * @since 7/09/2017 0.0.1-SNAPSHOT
+	 * @return the prependContent
+	 */
+	public String getPrependContent()
+	{
+		return prependContent;
+	}
+
+	/**
+	 * @author Alejandro Vivas
+	 * @version 7/09/2017 0.0.1-SNAPSHOT
+	 * @since 7/09/2017 0.0.1-SNAPSHOT
+	 * @param prependContent the prependContent to set
+	 */
+	public void setPrependContent(String prependContent)
+	{
+		this.prependContent = prependContent;
+	}
+
+	/**
+	 * @author Alejandro Vivas
+	 * @version 7/09/2017 0.0.1-SNAPSHOT
+	 * @since 7/09/2017 0.0.1-SNAPSHOT
+	 * @return the appendContent
+	 */
+	public String getAppendContent()
+	{
+		return appendContent;
+	}
+
+	/**
+	 * @author Alejandro Vivas
+	 * @version 7/09/2017 0.0.1-SNAPSHOT
+	 * @since 7/09/2017 0.0.1-SNAPSHOT
+	 * @param appendContent the appendContent to set
+	 */
+	public void setAppendContent(String appendContent)
+	{
+		this.appendContent = appendContent;
 	}
 }

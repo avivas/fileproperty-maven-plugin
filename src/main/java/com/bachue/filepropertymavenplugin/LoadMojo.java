@@ -26,22 +26,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/*
- * Copyright 2001-2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -55,7 +39,7 @@ import com.bachue.filepropertymavenplugin.util.FileUtil;
 /**
  * Load content file to properties in maven.
  * @author Alejandro Vivas
- * @version 6/09/2017 0.0.1-SNAPSHOT
+ * @version 7/09/2017 0.0.1-SNAPSHOT
  * @since 6/09/2017 0.0.1-SNAPSHOT
  */
 @Mojo(name = "load", defaultPhase = LifecyclePhase.VALIDATE)
@@ -90,7 +74,7 @@ public class LoadMojo extends AbstractMojo
 	/**
 	 * Read content of sources file
 	 * @author Alejandro Vivas
-	 * @version 6/09/2017 0.0.1-SNAPSHOT
+	 * @version 7/09/2017 0.0.1-SNAPSHOT
 	 * @since 6/09/2017 0.0.1-SNAPSHOT
 	 * @param loadProperty Object with configuration
 	 * @param stringBuilder Object with content
@@ -106,7 +90,7 @@ public class LoadMojo extends AbstractMojo
 				{
 					sourceFile = getProject().getBasedir() + File.separator + sourceFile;
 				}
-				readContent(sourceFile, loadProperty.getSourceEncoding(), loadProperty.isAppendNewLine(), stringBuilder);
+				readContent(sourceFile, loadProperty.getSourceEncoding(), loadProperty.isAppendNewLine(), stringBuilder,loadProperty.getPrependContent(),loadProperty.getAppendContent());
 			}
 		}
 	}
@@ -114,7 +98,7 @@ public class LoadMojo extends AbstractMojo
 	/**
 	 * Read content of sources directories
 	 * @author Alejandro Vivas
-	 * @version 6/09/2017 0.0.1-SNAPSHOT
+	 * @version 7/09/2017 0.0.1-SNAPSHOT
 	 * @since 6/09/2017 0.0.1-SNAPSHOT
 	 * @param loadProperty Object with configuration
 	 * @param stringBuilder Object with content
@@ -140,7 +124,7 @@ public class LoadMojo extends AbstractMojo
 			Collection<File> files = FileUtil.getFiles(absoluteDirectories, loadProperty.getExtensions(), getLog());
 			for (File sourceFile : files)
 			{
-				readContent(sourceFile.getAbsolutePath(), loadProperty.getSourceEncoding(), loadProperty.isAppendNewLine(), stringBuilder);
+				readContent(sourceFile.getAbsolutePath(), loadProperty.getSourceEncoding(), loadProperty.isAppendNewLine(), stringBuilder,loadProperty.getPrependContent(),loadProperty.getAppendContent());
 			}
 		}
 	}
@@ -148,7 +132,7 @@ public class LoadMojo extends AbstractMojo
 	/**
 	 * Read content of a file
 	 * @author Alejandro Vivas
-	 * @version 6/09/2017 0.0.1-SNAPSHOT
+	 * @version 7/09/2017 0.0.1-SNAPSHOT
 	 * @since 6/09/2017 0.0.1-SNAPSHOT
 	 * @param sourceFile Path of source file
 	 * @param sourceEncoding Source encoding
@@ -156,12 +140,27 @@ public class LoadMojo extends AbstractMojo
 	 * @param stringBuilder Object with content
 	 * @throws MojoExecutionException If fail to read a file
 	 */
-	private void readContent(String sourceFile, String sourceEncoding, boolean isAppendNewLine, StringBuilder stringBuilder) throws MojoExecutionException
+	private void readContent(String sourceFile, String sourceEncoding, boolean isAppendNewLine, StringBuilder stringBuilder,String prependContent,String appendContent) throws MojoExecutionException
 	{
 		String content;
 		try
 		{
+			String fileName = sourceFile.substring(sourceFile.lastIndexOf(File.separator)+1);
+			String simpleFileName = sourceFile.substring(sourceFile.lastIndexOf(File.separator)+1,sourceFile.lastIndexOf("."));
 			content = FileUtil.fileToString(sourceFile, sourceEncoding);
+			
+			if(prependContent != null)
+			{
+				content = prependContent + content;
+			}
+			if(appendContent != null)
+			{
+				content = content + appendContent;
+			}
+			
+			content = content.replaceAll("\\$\\{fileName\\}", fileName);
+			content = content.replaceAll("\\$\\{simpleFileName\\}", simpleFileName);
+			content = content.replaceAll("\\$\\{absoluteFileName\\}", sourceFile);
 		}
 		catch (IOException e)
 		{
